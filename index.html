@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compartilhamento em Tempo Real</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Painel Compartilhado</h2>
+        
+        <div class="card">
+            <h3>Informação Atual:</h3>
+            <p id="info-exibida">Carregando...</p>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="novo-dado" placeholder="Digite a nova informação...">
+            <button id="btn-enviar">Atualizar Plataforma</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
