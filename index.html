@@ -3,24 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compartilhamento em Tempo Real</title>
+    <title>Chat em Tempo Real</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Importando o Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
-    <div class="container">
-        <h2>Painel Compartilhado</h2>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Sala de Mensagens</h2>
+            <input type="text" id="nome-usuario" placeholder="Seu nome...">
+        </div>
         
-        <div class="card">
-            <h3>Informação Atual:</h3>
-            <p id="info-exibida">Carregando...</p>
+        <!-- Área onde os balões de mensagens vão aparecer -->
+        <div class="chat-messages" id="zona-mensagens">
+            <!-- As mensagens vão brotar aqui de forma dinâmica -->
         </div>
 
-        <div class="input-group">
-            <input type="text" id="novo-dado" placeholder="Digite a nova informação...">
-            <button id="btn-enviar">Atualizar Plataforma</button>
+        <div class="chat-input-area">
+            <input type="text" id="texto-mensagem" placeholder="Digite sua mensagem...">
+            <button id="btn-enviar">Enviar</button>
         </div>
     </div>
 
