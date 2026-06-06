@@ -3,31 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat em Tempo Real</title>
+    <title>Na_escuta</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Importando o Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
-    <div class="chat-container">
-        <div class="chat-header">
-            <h2>Sala de Mensagens</h2>
-            <input type="text" id="nome-usuario" placeholder="Seu nome...">
+    <div id="screen-onboarding" class="screen active">
+        <div class="tech-bg-overlay"></div>
+        <div class="onboarding-content">
+            <div class="logo-container">
+                <div class="icon-headphones">🎧</div>
+                <h1>Na_escuta</h1>
+                <p class="subtitle">Um espaço seguro para as tuas conversas.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Como queres ser chamado?</label>
+                <input type="text" id="username" placeholder="Digita o teu nome ou codinome..." autocomplete="off">
+                
+                <div class="remember-container">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="keep-logged" checked>
+                        Manter conectado neste dispositivo
+                    </label>
+                </div>
+
+                <button id="btn-enter" onclick="enterApp()">ENTRAR NA ESCUTA</button>
+                <button id="btn-about" class="btn-secondary-link" onclick="openAboutModal()">💡 Sobre o aplicativo</button>
+            </div>
         </div>
-        
-        <!-- Área onde os balões de mensagens vão aparecer -->
-        <div class="chat-messages" id="zona-mensagens">
-            <!-- As mensagens vão brotar aqui de forma dinâmica -->
+    </div>
+
+    <div id="about-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Sobre o Na_escuta</h3>
+            <p>Privacidade absoluta e efemeridade digital. Sem registos centrais ou logs permanentes.</p>
+            <div class="modal-footer-note">Criado e desenvolvido por Rodrigo Silveira</div>
+            <button onclick="closeAboutModal()" style="margin-top: 15px; width: 100%;">Entendido</button>
+        </div>
+    </div>
+
+    <div id="screen-home" class="screen">
+        <header class="app-header">
+            <div class="user-info">
+                <span class="user-avatar" id="profile-avatar">👤</span>
+                <div>
+                    <h2 id="display-profile-name">Nome do Usuário</h2>
+                    <span class="status-tag online" id="display-profile-status">🎧 Na escuta</span>
+                </div>
+            </div>
+            <button class="icon-btn" onclick="toggleSettingsMenu()">⚙️</button>
+
+            <div id="settings-menu" class="dropdown-menu">
+                <div class="menu-info">🔒 Nuvem Ativa</div>
+                <hr style="border-color: var(--bg-primary); margin: 2px 0;">
+                <div class="status-select-title">Alterar Status:</div>
+                <div onclick="changeUserStatus('Na escuta', 'online')">🎧 Na escuta</div>
+                <div onclick="changeUserStatus('Só de olho', 'away')">🟡 Só de olho</div>
+                <div onclick="changeUserStatus('Ocupado', 'busy')">🔴 Ocupado</div>
+                <hr style="border-color: var(--bg-primary); margin: 5px 0;">
+                <div onclick="logoutApp()" style="color: var(--danger); font-weight: bold;">🚪 Sair</div>
+            </div>
+        </header>
+
+        <div class="search-bar">
+            <input type="text" id="search-user-input" placeholder="🔍 Procurar usuário ativo..." oninput="filterUserList()">
         </div>
 
-        <div class="chat-input-area">
-            <input type="text" id="texto-mensagem" placeholder="Digite sua mensagem...">
-            <button id="btn-enviar">Enviar</button>
+        <div class="section-title-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Usuários Disponíveis</span>
+            <button id="btn-start-multi-chat" onclick="startChatWithSelected()" class="btn-action-chat">Conversar (0)</button>
+        </div>
+        <div id="user-list" class="user-list"></div>
+
+        <div class="section-title" style="font-size: 0.8rem; color: var(--text-muted); margin: 16px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">Conversas em Andamento</div>
+        <main class="chat-list" id="main-chat-list">
+            <div class="empty-chat-state" id="empty-state">
+                <span class="empty-icon">💬</span>
+                <p>Nenhuma conversa ativa por aqui.</p>
+                <p class="empty-subtext">Selecione um ou mais usuários acima para iniciar uma escuta.</p>
+            </div>
+        </main>
+    </div>
+
+    <div id="screen-chat" class="screen protection-overlay">
+        <div class="app-header">
+            <div class="user-info">
+                <button class="icon-btn" onclick="exitChatView()">⬅️</button>
+                <div class="user-text-details">
+                    <h2 id="chat-contact-name" style="font-size: 1rem; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Buscando...</h2>
+                    <span class="status-tag online" id="chat-contact-status" style="font-size: 0.7rem;">Sessão Ativa</span>
+                </div>
+            </div>
+            <button id="btn-close-scuta" class="btn-end-stream" onclick="endEscutaSession()">Encerrar Escuta</button>
+        </div>
+
+        <div class="chat-messages" id="zona-mensagens">
+            </div>
+
+        <div class="chat-footer">
+            <div class="input-wrapper">
+                <input type="text" id="texto-mensagem" placeholder="Digita uma mensagem secreta..." autocomplete="off">
+            </div>
+            <button class="audio-btn" id="btn-enviar">🎙️</button>
         </div>
     </div>
 
     <script src="app.js"></script>
 </body>
-</html>
+                    </html>
+
